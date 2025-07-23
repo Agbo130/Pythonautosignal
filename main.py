@@ -1,13 +1,14 @@
+# main.py
 from fastapi import FastAPI
+import asyncio
 from signal_sender import send_crypto_signal
 
 app = FastAPI()
 
 @app.get("/")
-def root():
-    return {"message": "Crypto Signal Bot is Running."}
+def read_root():
+    return {"status": "✅ Crypto Signal Bot is Running"}
 
-@app.get("/send-signal")
-def send_signal():
-    success = send_crypto_signal()
-    return {"status": "sent" if success else "failed"}
+@app.on_event("startup")
+async def start_bot():
+    asyncio.create_task(send_crypto_signal())
